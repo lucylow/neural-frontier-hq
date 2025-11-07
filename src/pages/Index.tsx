@@ -1,6 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Brain, Box, Zap, Leaf, Trophy, ChevronDown, Gamepad2, Clock, Bot, Grid3x3, Palette, Mic, Music, Mountain, GitBranch, Dices } from "lucide-react";
+import { useEffect, useRef } from "react";
 import heroImage from "@/assets/quaternion-hero.webp";
 import mapImage from "@/assets/game-maps.webp";
 
@@ -11,6 +12,43 @@ const Index = () => {
       element.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
   };
+
+  useEffect(() => {
+    // Scroll progress bar
+    const progressBar = document.createElement('div');
+    progressBar.className = 'fixed top-0 left-0 h-1 bg-gradient-to-r from-primary to-secondary z-[100] transition-all';
+    progressBar.style.width = '0%';
+    document.body.appendChild(progressBar);
+
+    const handleScroll = () => {
+      const winHeight = window.innerHeight;
+      const docHeight = document.documentElement.scrollHeight;
+      const scrollTop = window.pageYOffset;
+      const progress = (scrollTop / (docHeight - winHeight)) * 100;
+      progressBar.style.width = `${progress}%`;
+    };
+
+    window.addEventListener('scroll', handleScroll);
+
+    // Intersection Observer for fade-in animations
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('opacity-100', 'translate-y-0');
+          entry.target.classList.remove('opacity-0', 'translate-y-5');
+        }
+      });
+    }, { threshold: 0.1 });
+
+    const elements = document.querySelectorAll('.animate-on-scroll');
+    elements.forEach(el => observer.observe(el));
+
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+      progressBar.remove();
+      observer.disconnect();
+    };
+  }, []);
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-background to-muted/20">
@@ -23,13 +61,13 @@ const Index = () => {
               <span>QUATERNION<span className="text-secondary">:</span>NF</span>
             </a>
             <div className="hidden md:flex items-center gap-8">
-              <a href="#overview" onClick={(e) => { e.preventDefault(); scrollToSection('overview'); }} className="hover:text-primary transition-colors">Overview</a>
-              <a href="#features" onClick={(e) => { e.preventDefault(); scrollToSection('features'); }} className="hover:text-primary transition-colors">Features</a>
-              <a href="#ai-tools" onClick={(e) => { e.preventDefault(); scrollToSection('ai-tools'); }} className="hover:text-primary transition-colors">AI Tools</a>
-              <a href="#demo" onClick={(e) => { e.preventDefault(); scrollToSection('demo'); }} className="hover:text-primary transition-colors">Demo</a>
-              <a href="#characters" onClick={(e) => { e.preventDefault(); scrollToSection('characters'); }} className="hover:text-primary transition-colors">Characters</a>
+              <a href="#overview" onClick={(e) => { e.preventDefault(); scrollToSection('overview'); }} className="hover:text-primary transition-colors focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-background rounded">Overview</a>
+              <a href="#features" onClick={(e) => { e.preventDefault(); scrollToSection('features'); }} className="hover:text-primary transition-colors focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-background rounded">Features</a>
+              <a href="#ai-tools" onClick={(e) => { e.preventDefault(); scrollToSection('ai-tools'); }} className="hover:text-primary transition-colors focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-background rounded">AI Tools</a>
+              <a href="#demo" onClick={(e) => { e.preventDefault(); scrollToSection('demo'); }} className="hover:text-primary transition-colors focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-background rounded">Demo</a>
+              <a href="#characters" onClick={(e) => { e.preventDefault(); scrollToSection('characters'); }} className="hover:text-primary transition-colors focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-background rounded">Characters</a>
             </div>
-            <Button className="bg-gradient-to-r from-primary to-secondary text-primary-foreground hover:shadow-neon">
+            <Button className="bg-gradient-to-r from-primary to-secondary text-primary-foreground hover:shadow-neon focus:ring-2 focus:ring-primary focus:ring-offset-2">
               Play Now
             </Button>
           </div>
@@ -48,13 +86,29 @@ const Index = () => {
               An AI-generated strategy game where every decision rotates the four dimensions of reality. Command procedurally generated armies, exploit dynamic terrain, and balance the Quaternion to achieve victory.
             </p>
             <div className="flex flex-wrap gap-4">
-              <Button size="lg" className="bg-gradient-to-r from-primary to-secondary text-primary-foreground hover:shadow-neon">
-                Play Web Demo
+              <Button size="lg" className="bg-gradient-to-r from-primary to-secondary text-primary-foreground hover:shadow-neon focus:ring-2 focus:ring-primary focus:ring-offset-2">
+                Play Free Demo
               </Button>
-              <Button size="lg" variant="outline" className="border-primary text-primary hover:bg-primary hover:text-primary-foreground">
-                Watch Trailer
+              <Button size="lg" variant="outline" className="border-primary text-primary hover:bg-primary hover:text-primary-foreground focus:ring-2 focus:ring-primary focus:ring-offset-2">
+                Watch Gameplay
               </Button>
             </div>
+            
+            <div className="flex flex-wrap gap-6 text-sm">
+              <span className="flex items-center gap-2">
+                <Clock className="w-4 h-4 text-primary" />
+                <strong className="text-primary">15-30min</strong> Demo
+              </span>
+              <span className="flex items-center gap-2">
+                <Gamepad2 className="w-4 h-4 text-primary" />
+                <strong className="text-primary">No Download</strong> Required
+              </span>
+              <span className="flex items-center gap-2">
+                <Zap className="w-4 h-4 text-primary" />
+                <strong className="text-primary">Instant Play</strong>
+              </span>
+            </div>
+            
             <div className="inline-flex items-center gap-2 bg-gradient-to-r from-secondary to-primary text-primary-foreground px-4 py-2 rounded-md font-bold">
               <Trophy className="w-5 h-5" />
               Chroma Awards 2025 Submission
@@ -88,6 +142,29 @@ const Index = () => {
         </button>
       </section>
 
+      {/* Social Proof Section */}
+      <section className="py-12 bg-muted/20 border-y border-primary/20">
+        <div className="container mx-auto px-4">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 text-center">
+            <div className="space-y-2 p-6 rounded-lg bg-card/50 border border-primary/20 hover:border-primary/40 transition-colors">
+              <div className="text-5xl mb-2">🏆</div>
+              <h4 className="text-xl font-bold text-primary">Chroma Awards 2025</h4>
+              <p className="text-muted-foreground">Official Submission</p>
+            </div>
+            <div className="space-y-2 p-6 rounded-lg bg-card/50 border border-primary/20 hover:border-primary/40 transition-colors">
+              <div className="text-5xl mb-2">⭐</div>
+              <h4 className="text-xl font-bold text-primary">AI Innovation</h4>
+              <p className="text-muted-foreground">Cutting-Edge Technology</p>
+            </div>
+            <div className="space-y-2 p-6 rounded-lg bg-card/50 border border-primary/20 hover:border-primary/40 transition-colors">
+              <div className="text-5xl mb-2">🎮</div>
+              <h4 className="text-xl font-bold text-primary">Instant Play</h4>
+              <p className="text-muted-foreground">No Registration Needed</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* Overview Section */}
       <section id="overview" className="py-20">
         <div className="container mx-auto px-4">
@@ -95,7 +172,7 @@ const Index = () => {
           <div className="w-24 h-1 bg-primary mx-auto mb-12 shadow-neon" />
           
           <div className="grid md:grid-cols-3 gap-8">
-            <Card className="bg-card/70 border-primary/30 hover:border-primary hover:shadow-neon transition-all hover:-translate-y-2 group">
+            <Card className="animate-on-scroll opacity-0 translate-y-5 transition-all duration-700 bg-card/70 border-primary/30 hover:border-primary hover:shadow-neon hover:-translate-y-2 group">
               <CardContent className="p-6">
                 <Grid3x3 className="w-12 h-12 text-primary mb-4 group-hover:scale-110 transition-transform" />
                 <h3 className="text-xl font-bold mb-2 text-primary">Procedural Strategy</h3>
@@ -103,7 +180,7 @@ const Index = () => {
               </CardContent>
             </Card>
 
-            <Card className="bg-card/70 border-primary/30 hover:border-primary hover:shadow-neon transition-all hover:-translate-y-2 group">
+            <Card className="animate-on-scroll opacity-0 translate-y-5 transition-all duration-700 bg-card/70 border-primary/30 hover:border-primary hover:shadow-neon hover:-translate-y-2 group" style={{ transitionDelay: '100ms' }}>
               <CardContent className="p-6">
                 <Bot className="w-12 h-12 text-primary mb-4 group-hover:scale-110 transition-transform" />
                 <h3 className="text-xl font-bold mb-2 text-primary">AI-Driven Gameplay</h3>
@@ -111,7 +188,7 @@ const Index = () => {
               </CardContent>
             </Card>
 
-            <Card className="bg-card/70 border-primary/30 hover:border-primary hover:shadow-neon transition-all hover:-translate-y-2 group">
+            <Card className="animate-on-scroll opacity-0 translate-y-5 transition-all duration-700 bg-card/70 border-primary/30 hover:border-primary hover:shadow-neon hover:-translate-y-2 group" style={{ transitionDelay: '200ms' }}>
               <CardContent className="p-6">
                 <Brain className="w-12 h-12 text-primary mb-4 group-hover:scale-110 transition-transform" />
                 <h3 className="text-xl font-bold mb-2 text-primary">Four-Dimensional Balance</h3>
@@ -129,7 +206,7 @@ const Index = () => {
           <div className="w-24 h-1 bg-primary mx-auto mb-12 shadow-neon" />
           
           <div className="grid md:grid-cols-3 gap-8">
-            <Card className="bg-card/70 border-primary/30 hover:border-primary hover:shadow-neon transition-all hover:-translate-y-2 overflow-hidden group">
+            <Card className="animate-on-scroll opacity-0 translate-y-5 transition-all duration-700 bg-card/70 border-primary/30 hover:border-primary hover:shadow-neon hover:-translate-y-2 overflow-hidden group">
               <div className="absolute inset-0 bg-gradient-to-r from-transparent via-primary/10 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700" />
               <CardContent className="p-6 relative">
                 <Dices className="w-12 h-12 text-primary mb-4" />
